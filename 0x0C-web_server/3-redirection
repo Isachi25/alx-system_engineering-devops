@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# bash: script install and configure Nginx web server
+# and redirects traffic:
+
+sudo apt-get update -y
+sudo apt-get install -y nginx
+
+# configure Nginx
+sudo sed -i 's/80 default_server/80/' /etc/nginx/sites-available/default
+
+# create index.html file served out by server:
+# & configure the redirection
+echo 'Hello World!' > /etc/nginx/html/index.html
+printf %s "server {
+    listen 80;
+    listen [::]:80 default_server;
+    root   /etc/nginx/html;
+    index  index.html index.htm;
+    location /redirect_me {
+        return 301 https://stackoverflow.com/;
+    }
+}" > /etc/nginx/sites-available/default
+
+service nginx restart
