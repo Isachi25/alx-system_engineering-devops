@@ -1,0 +1,31 @@
+nstalls and configures HAproxy on lb-01 server
+
+sudo apt-get -y update
+sudo apt-get install -y haproxy
+
+# configure HAProxy
+sudo mv /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.backup
+
+echo "
+frontend frontend_http
+    bind *:80
+    mode http
+    default_backend backend_http
+
+backend backend_http
+    mode http
+    balance roundrobin
+    server 192010-web-01 54.157.182.28:80 check
+    server 192010-web-02 54.209.136.185:80 check
+" | sudo tee /etc/haproxy/haproxy.cfg > /dev/null
+
+# ascertain that HAproxy can be managed via an init script; start
+sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+sudo service haproxy start
+
+# verify HAProxy configuration
+sleep 5  # wait for HAProxy to start
+curl -Is localhost | grep "Server:\|X-Served-By:"
+
+# restart HAProxy LB to apply changes
+sudo service haproxy restart
