@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Configures a new Ubuntu server with a custom HTTP header response
-sudo apt-get update
-sudo apt-get install -y nginx
+sudo apt-get -y update
+sudo apt-get -y install nginx
 
 mkdir -p /var/www/html
 touch /var/www/html/index.html
-echo "Hello world" > /var/www/html/index.html
+sudo echo "Hello world" > /var/www/html/index.html
 touch /var/www/html/404.html
-echo "Ceci n'est pas une page" > /var/www/html/404.html
+sudo echo "Ceci n'est pas une page" > /var/www/html/404.html
 
 printf %s "server {
     listen 80 default_server;
@@ -25,4 +25,4 @@ printf %s "server {
     }
 }" > /etc/nginx/sites-available/default
 
-service nginx restart
+sudo service nginx restart
