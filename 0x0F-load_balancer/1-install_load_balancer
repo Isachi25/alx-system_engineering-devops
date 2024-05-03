@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#installs and configures HAproxy on lb-01 server
+
+sudo apt-get -y update
+sudo apt-get install -y haproxy
+
+# configure HAProxy
+sudo mv /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.backup
+
+echo "
+frontend http
+    bind *:80
+    mode http
+    default_backend myservers
+
+backend myservers
+    mode http
+    balance roundrobin
+    server 472489-web-01 54.173.155.211:80 check
+    server 472489-web-02 54.90.14.238:80 check
+" | sudo tee /etc/haproxy/haproxy.cfg > /dev/null
+
+# ascertain that HAproxy can be managed via an init script; start
+sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+sudo service haproxy start
+
+# verify HAProxy configuration
+sleep 5  # wait for HAProxy to start
+curl -Is localhost | grep "Server:\|X-Served-By:"
+
+# restart HAProxy LB to apply changes
+sudo service haproxy restart
