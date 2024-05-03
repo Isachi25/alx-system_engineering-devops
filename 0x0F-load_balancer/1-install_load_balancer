@@ -1,4 +1,4 @@
-nstalls and configures HAproxy on lb-01 server
+#installs and configures HAproxy on lb-01 server
 
 sudo apt-get -y update
 sudo apt-get install -y haproxy
