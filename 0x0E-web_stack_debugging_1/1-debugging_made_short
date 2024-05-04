@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Configures an Nginx server (service (init) must say that nginx is not running ← for real)
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+service nginx start
+kill "$(pgrep 'nginx' | head -1)"
